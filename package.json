@@ -13,18 +13,22 @@
     "astro": "astro"
   },
   "dependencies": {
+    "axios": "^1.14.0",
+    "cheerio": "^1.0.0",
+    "form-data": "^4.0.2",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
     "@astrojs/node": "^11.1.4",
     "@astrojs/react": "^6.0.4",
     "@astrojs/tailwind": "^6.0.2",
+    "@astrojs/vercel": "^11.0.13",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
-    "@types/three": "^0.185.4",
     "astro": "^7.2.9",
     "chart.js": "^4.5.1",
-    "postprocessing": "^6.39.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "tailwindcss": "^3.4.19",
-    "three": "^0.185.1"
+    "tailwindcss": "^3.4.19"
   }
 }
