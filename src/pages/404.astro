@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 - Endpoint Not Found | Zaell API Stats">
+  <div class="min-h-[85vh] w-full flex flex-col items-center justify-center p-4 sm:p-6 text-center font-mono">
+    <!-- Error Box (Exact Original Style) -->
+    <div class="max-w-[540px] w-full bg-[#141414] border border-[#242424] rounded-2xl p-8 sm:p-10 flex flex-col items-center shadow-lg">
+      
+      <!-- Circle Exclamation Icon -->
+      <div class="w-12 h-12 rounded-full border border-red-500/30 bg-red-500/10 flex items-center justify-center text-red-400 text-lg font-bold mb-6">
+        !
+      </div>
+
+      <!-- HTTP Status Code -->
+      <div class="text-xs sm:text-sm text-red-400 font-bold tracking-wider mb-2 uppercase">
+        HTTP 404 - ENDPOINT_NOT_FOUND
+      </div>
+
+      <!-- Main Heading -->
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mb-3 tracking-tight">
+        Route Does Not Exist
+      </h1>
+
+      <!-- Description -->
+      <p class="text-xs sm:text-sm text-gray-400 leading-relaxed max-w-md mb-8">
+        The requested endpoint or telemetry parameter is not registered in this Zaell node.
+      </p>
+
+      <!-- Return Button -->
+      <a
+        href="/"
+        class="w-full py-3.5 px-4 rounded-lg bg-[#1c1c1c] hover:bg-[#252525] border border-[#2e2e2e] text-xs sm:text-sm font-bold text-gray-200 hover:text-white transition-colors"
+      >
+        ← Return to API Stats Dashboard
+      </a>
+    </div>
+  </div>
+</Layout>

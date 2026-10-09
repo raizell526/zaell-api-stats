@@ -1,0 +1,183 @@
+---
+import CardGridPattern from './CardGridPattern.astro';
+import { initialTrafficLogs } from '../data/mock';
+---
+
+<div class="bg-white/[0.03] border border-white/[0.07] rounded-xl sm:rounded-2xl p-4 sm:p-7 shadow-xl flex flex-col justify-between overflow-hidden relative backdrop-blur-md w-full min-w-0 max-w-full">
+  <!-- Grid Pattern Background Effect -->
+  <CardGridPattern patternId="livelogs-grid-pattern" className="opacity-40" />
+  
+  <!-- Table Header -->
+  <div class="flex items-center justify-between gap-3 mb-4 relative z-10">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-sm sm:text-base font-bold text-white tracking-tight truncate font-mono">Live API Request Stream</h2>
+      <p class="text-xs text-gray-400 font-mono mt-0.5 truncate">Real-time HTTP/2 & HTTP/3 Ingest Logs</p>
+    </div>
+
+    <!-- Right: Clean Live Status Indicator with Clock -->
+    <div class="flex items-center gap-2 font-mono text-xs shrink-0">
+      <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#15261a] text-emerald-400 text-xs font-semibold border border-[#23452a]/60">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="sync-time-header">Live: 22:33:48</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Container with Horizontal Scroll -->
+  <div class="overflow-x-auto rounded-xl border border-white/[0.08] relative z-10 bg-black/20 w-full min-w-0 max-w-full">
+    <table class="w-full min-w-[540px] text-left border-collapse text-xs font-mono">
+      <thead>
+        <tr class="text-xs text-gray-400 border-b border-white/[0.08] bg-black/40 backdrop-blur-md select-none font-medium">
+          <th class="py-3 px-4 font-medium">Time</th>
+          <th class="py-3 px-4 font-medium">Method & Path</th>
+          <th class="py-3 px-4 font-medium text-center">Status</th>
+          <th class="py-3 px-4 font-medium">Region & IP</th>
+          <th class="py-3 px-4 font-medium">Payload</th>
+          <th class="py-3 px-4 font-medium text-right">Latency</th>
+        </tr>
+      </thead>
+      <tbody id="live-logs-tbody" class="divide-y divide-white/[0.04]">
+        {initialTrafficLogs.map((log) => {
+          const is2xx = log.status >= 200 && log.status < 300;
+          const is4xx = log.status >= 400 && log.status < 500;
+          const is5xx = log.status >= 500;
+
+          const statusBadge = is2xx
+            ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+            : is4xx
+            ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+            : 'text-red-400 bg-red-500/10 border-red-500/20';
+
+          const methodBadge = log.method === 'GET'
+            ? 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+            : log.method === 'POST'
+            ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+            : log.method === 'DELETE'
+            ? 'text-red-400 bg-red-500/10 border-red-500/20'
+            : 'text-purple-400 bg-purple-500/10 border-purple-500/20';
+
+          return (
+            <tr class="hover:bg-white/[0.04]" data-id={log.id}>
+              <td class="py-3 px-4 text-gray-400 whitespace-nowrap">{log.time}</td>
+              <td class="py-3 px-4 whitespace-nowrap">
+                <span class={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold mr-2 border ${methodBadge}`}>
+                  {log.method}
+                </span>
+                <span class="text-white font-medium">{log.endpoint}</span>
+              </td>
+              <td class="py-3 px-4 text-center whitespace-nowrap">
+                <span class={`inline-block px-2 py-0.5 rounded text-[11px] font-bold border ${statusBadge}`}>
+                  {log.status}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-gray-300 whitespace-nowrap">
+                <span>{log.region}</span>
+                <span class="text-gray-400 text-[10px] ml-1.5">[{log.ip}]</span>
+              </td>
+              <td class="py-3 px-4 text-gray-400 whitespace-nowrap">{log.payloadSize}</td>
+              <td class="py-3 px-4 text-right whitespace-nowrap">
+                <span class={log.durationMs > 100 ? 'text-amber-400 font-bold' : 'text-emerald-400 font-bold'}>
+                  {log.duration}
+                </span>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  import { initialTrafficLogs } from '../data/mock';
+
+  const tbody = document.getElementById('live-logs-tbody');
+  const syncClock = document.getElementById('sync-time-header');
+
+  function updateClock() {
+    if (syncClock) {
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      syncClock.textContent = `Live: ${timeStr}`;
+    }
+  }
+
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  function insertRandomLog() {
+    if (!tbody) return;
+
+    const randomIndex = Math.floor(Math.random() * initialTrafficLogs.length);
+    const template = initialTrafficLogs[randomIndex];
+
+    const now = new Date();
+    const timeStr = now.toTimeString().split(' ')[0];
+    const uniqueId = `req_live_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+
+    const randomizedLatency = Math.max(8, template.durationMs + Math.floor((Math.random() - 0.5) * 16));
+
+    const is2xx = template.status >= 200 && template.status < 300;
+    const is4xx = template.status >= 400 && template.status < 500;
+    const statusBadge = is2xx
+      ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+      : is4xx
+      ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+      : 'text-red-400 bg-red-500/10 border-red-500/20';
+
+    const methodBadge = template.method === 'GET'
+      ? 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+      : template.method === 'POST'
+      ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+      : template.method === 'DELETE'
+      ? 'text-red-400 bg-red-500/10 border-red-500/20'
+      : 'text-purple-400 bg-purple-500/10 border-purple-500/20';
+
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-white/[0.04] animate-slide-down-smooth';
+    tr.setAttribute('data-id', uniqueId);
+
+    tr.innerHTML = `
+      <td class="py-3 px-4 text-gray-400 whitespace-nowrap">${timeStr}</td>
+      <td class="py-3 px-4 whitespace-nowrap">
+        <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold mr-2 border ${methodBadge}">
+          ${template.method}
+        </span>
+        <span class="text-white font-medium">${template.endpoint}</span>
+      </td>
+      <td class="py-3 px-4 text-center whitespace-nowrap">
+        <span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold border ${statusBadge}">
+          ${template.status}
+        </span>
+      </td>
+      <td class="py-3 px-4 text-gray-300 whitespace-nowrap">
+        <span>${template.region}</span>
+        <span class="text-gray-400 text-[10px] ml-1.5">[${template.ip}]</span>
+      </td>
+      <td class="py-3 px-4 text-gray-400 whitespace-nowrap">${template.payloadSize}</td>
+      <td class="py-3 px-4 text-right whitespace-nowrap">
+        <span class="${randomizedLatency > 100 ? 'text-amber-400 font-bold' : 'text-emerald-400 font-bold'}">
+          ${randomizedLatency}ms
+        </span>
+      </td>
+    `;
+
+    tbody.insertBefore(tr, tbody.firstChild);
+
+    // Keep max 10 rows in view
+    while (tbody.children.length > 10) {
+      tbody.removeChild(tbody.lastChild as Node);
+    }
+  }
+
+  // Generate simulated live traffic
+  function scheduleNextLog() {
+    const delay = Math.floor(Math.random() * 2500) + 1500;
+    setTimeout(() => {
+      insertRandomLog();
+      scheduleNextLog();
+    }, delay);
+  }
+
+  scheduleNextLog();
+</script>

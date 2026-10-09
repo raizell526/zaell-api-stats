@@ -1,0 +1,285 @@
+---
+import CardGridPattern from './CardGridPattern.astro';
+
+const apiEndpoints = [
+  {
+    id: 'ep-metrics',
+    method: 'GET',
+    path: '/v1/analytics/realtime/metrics',
+    tag: 'Analytics',
+    title: 'Real-time Telemetry & Traffic Metrics',
+    desc: 'Retrieve aggregated real-time request volume, global latency percentiles, error rate breakdown, and active worker node health.',
+    auth: 'Bearer <API_KEY>',
+    params: [
+      { name: 'timeframe', type: 'string', req: false, desc: 'Interval: 1h, 24h, 7d (default: 24h)' },
+      { name: 'region', type: 'string', req: false, desc: 'Filter by POP: us-east, ap-southeast, eu-central' },
+    ],
+    curl: 'curl -X GET "https://api.zaell.dev/v1/analytics/realtime/metrics?timeframe=24h" \\\n  -H "Authorization: Bearer ak_live_demo123" \\\n  -H "Accept: application/json"',
+    responseStatus: '200 OK',
+    responseJson: `{
+  "success": true,
+  "timestamp": 1788172800,
+  "data": {
+    "totalRequests": 48240192,
+    "avgLatencyMs": 34,
+    "successRate": "99.92%",
+    "errorRate": "0.08%",
+    "activeKeys": 3420,
+    "percentiles": {
+      "p50": 18,
+      "p95": 78,
+      "p99": 142
+    }
+  }
+}`,
+  },
+  {
+    id: 'ep-endpoints',
+    method: 'GET',
+    path: '/v1/endpoints/performance',
+    tag: 'Endpoints',
+    title: 'Per-Endpoint Health & SLA Breakdown',
+    desc: 'Query granular performance metrics for each registered API endpoint including total throughput, average latency, and SLA compliance.',
+    auth: 'Bearer <API_KEY>',
+    params: [
+      { name: 'limit', type: 'number', req: false, desc: 'Max endpoints to return (default: 20)' },
+      { name: 'status', type: 'string', req: false, desc: 'Filter by health: healthy, degraded' },
+    ],
+    curl: 'curl -X GET "https://api.zaell.dev/v1/endpoints/performance" \\\n  -H "Authorization: Bearer ak_live_demo123"',
+    responseStatus: '200 OK',
+    responseJson: `{
+  "success": true,
+  "count": 6,
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/v1/auth/tokens/verify",
+      "service": "Authentication Gateway",
+      "totalRequests": "14.2M",
+      "avgLatency": 18,
+      "successRate": 99.98,
+      "status": "healthy"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/ai/completions/stream",
+      "service": "LLM Inference Relay",
+      "totalRequests": "11.8M",
+      "avgLatency": 142,
+      "successRate": 99.85,
+      "status": "healthy"
+    }
+  ]
+}`,
+  },
+  {
+    id: 'ep-gateways',
+    method: 'GET',
+    path: '/v1/gateways/health',
+    tag: 'Infrastructure',
+    title: 'Regional Edge Gateway POPs Health',
+    desc: 'Monitor global edge gateway node statuses, current origin round-trip latency, anycast health, and routing uptime.',
+    auth: 'Bearer <API_KEY>',
+    params: [],
+    curl: 'curl -X GET "https://api.zaell.dev/v1/gateways/health" \\\n  -H "Authorization: Bearer ak_live_demo123"',
+    responseStatus: '200 OK',
+    responseJson: `{
+  "success": true,
+  "clusterStatus": "all_operational",
+  "gateways": [
+    {
+      "regionCode": "us-east-1",
+      "name": "North America East Gateway",
+      "location": "N. Virginia, USA",
+      "latency": 14,
+      "uptime": 99.99,
+      "status": "operational"
+    },
+    {
+      "regionCode": "ap-southeast-1",
+      "name": "Asia Pacific Southeast Gateway",
+      "location": "Singapore",
+      "latency": 22,
+      "uptime": 100.0,
+      "status": "operational"
+    }
+  ]
+}`,
+  },
+  {
+    id: 'ep-provision',
+    method: 'POST',
+    path: '/v1/keys/tokens/provision',
+    tag: 'Security',
+    title: 'Provision Scoped API Token',
+    desc: 'Generate new authenticated API keys with custom rate limit tiers, IP whitelists, and scoped endpoint permissions.',
+    auth: 'Bearer <MASTER_ADMIN_KEY>',
+    params: [
+      { name: 'tier', type: 'string', req: true, desc: 'Tier: enterprise, pro, starter' },
+      { name: 'name', type: 'string', req: true, desc: 'Friendly name for consumer' },
+      { name: 'rateLimit', type: 'number', req: false, desc: 'Requests per minute (optional override)' },
+    ],
+    curl: 'curl -X POST "https://api.zaell.dev/v1/keys/tokens/provision" \\\n  -H "Authorization: Bearer master_sec_89x..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "tier": "enterprise",\n    "name": "Production Microservice App",\n    "rateLimit": 25000\n  }\'',
+    responseStatus: '201 Created',
+    responseJson: `{
+  "success": true,
+  "message": "API key provisioned successfully",
+  "key": {
+    "apiKeyId": "ak_live_79f182c09e",
+    "name": "Production Microservice App",
+    "tier": "enterprise",
+    "rateLimit": 25000,
+    "createdAt": "2026-08-31T22:38:00Z"
+  }
+}`,
+  },
+];
+---
+
+<div class="flex flex-col gap-6 font-sans">
+  <!-- Top Documentation Overview Banner -->
+  <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 sm:p-7 shadow-xl relative overflow-hidden backdrop-blur-md">
+    <CardGridPattern patternId="docs-banner-pattern" className="opacity-30" />
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="px-2.5 py-0.5 rounded-full bg-[#FF6B2C]/10 border border-[#FF6B2C]/20 text-[11px] font-mono font-bold text-[#FF6B2C]">
+            REST API v2.0
+          </span>
+          <span class="text-xs text-gray-400 font-mono">OpenAPI 3.1 Spec</span>
+        </div>
+        <h2 class="text-lg sm:text-xl font-bold text-white tracking-tight">OMNIFY API Stats & Analytics Documentation</h2>
+        <p class="text-xs text-gray-400 font-mono mt-1 max-w-2xl">
+          Programmatic REST endpoints to ingest telemetry, query endpoint SLAs, monitor regional POP gateways, and automate rate limit quotas.
+        </p>
+      </div>
+
+      <!-- Quick Server Specs Badges -->
+      <div class="flex flex-wrap items-center gap-2.5 font-mono text-xs">
+        <div class="px-3 py-2 rounded-xl bg-black/40 border border-white/[0.08] flex items-center gap-2">
+          <span class="text-gray-400">Base URL:</span>
+          <code class="text-emerald-400 font-bold">https://api.zaell.dev</code>
+        </div>
+        <div class="px-3 py-2 rounded-xl bg-black/40 border border-white/[0.08] flex items-center gap-2 text-gray-300">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span>Auth: Bearer Token</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Endpoints List (Structured Two-Pane Architecture) -->
+  <div class="flex flex-col gap-5">
+    {apiEndpoints.map((ep) => {
+      const isGet = ep.method === 'GET';
+      const methodBadge = isGet 
+        ? 'bg-blue-500/15 text-blue-400 border-blue-500/30' 
+        : 'bg-[#FF6B2C]/15 text-[#FF6B2C] border-[#FF6B2C]/30';
+
+      return (
+        <div class="bg-white/[0.02] hover:bg-white/[0.03] border border-white/[0.06] hover:border-white/[0.1] rounded-2xl p-5 sm:p-6 shadow-xl transition-all relative overflow-hidden backdrop-blur-md group">
+          <CardGridPattern patternId={`endpoint-pattern-${ep.id}`} className="opacity-20" />
+
+          <!-- Endpoint Header -->
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-4 mb-4 relative z-10">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono border ${methodBadge}`}>
+                {ep.method}
+              </span>
+              <code class="text-sm sm:text-base font-bold text-white font-mono tracking-tight">
+                {ep.path}
+              </code>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono text-gray-400 bg-white/[0.04] border border-white/[0.06]">
+                {ep.tag}
+              </span>
+            </div>
+
+            <!-- Auth Tag -->
+            <div class="flex items-center gap-2 text-xs font-mono text-gray-400">
+              <span class="text-gray-500">Required Auth:</span>
+              <code class="text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">
+                {ep.auth}
+              </code>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <p class="text-xs text-gray-300 font-sans leading-relaxed mb-4 relative z-10">
+            {ep.desc}
+          </p>
+
+          <!-- 2-Column Split: Parameters on Left, Code & Response on Right -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 relative z-10">
+            
+            <!-- Left: Parameters Table -->
+            <div class="lg:col-span-5 flex flex-col gap-2">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-gray-400 font-semibold">
+                {ep.params.length > 0 ? 'Parameters & Query Schema' : 'Headers & Context'}
+              </span>
+
+              {ep.params.length > 0 ? (
+                <div class="rounded-xl border border-white/[0.06] bg-black/30 overflow-hidden text-xs font-mono">
+                  <div class="divide-y divide-white/[0.04]">
+                    {ep.params.map((p) => (
+                      <div class="p-3 flex flex-col gap-1">
+                        <div class="flex items-center gap-2">
+                          <span class="text-[#FF6B2C] font-bold">{p.name}</span>
+                          <span class="text-[10px] text-gray-500 font-mono">[{p.type}]</span>
+                          {p.req ? (
+                            <span class="text-[9px] px-1 py-0.2 rounded bg-red-950 text-red-400 font-bold border border-red-800/40">REQUIRED</span>
+                          ) : (
+                            <span class="text-[9px] text-gray-500">optional</span>
+                          )}
+                        </div>
+                        <span class="text-gray-400 text-[11px] font-sans">{p.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div class="p-3.5 rounded-xl border border-white/[0.06] bg-black/30 text-xs font-mono text-gray-400">
+                  <p class="text-[11px] text-gray-400 font-sans leading-relaxed">
+                    No query parameters required. Simply send standard authorization headers to retrieve global cluster gateway telemetry.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <!-- Right: Code Snippet & Response Preview -->
+            <div class="lg:col-span-7 flex flex-col gap-3">
+              
+              <!-- cURL Box -->
+              <div class="rounded-xl border border-white/[0.08] bg-[#0a0c10] overflow-hidden">
+                <div class="flex items-center justify-between px-3.5 py-1.5 border-b border-white/[0.06] bg-black/40 text-[11px] font-mono text-gray-400">
+                  <span class="flex items-center gap-1.5 text-gray-300 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                    cURL Request Example
+                  </span>
+                  <span class="text-gray-500 text-[10px]">HTTP/1.1</span>
+                </div>
+                <pre class="p-3.5 text-[11px] font-mono text-gray-300 overflow-x-auto leading-relaxed selection:bg-[#FF6B2C]/30"><code>{ep.curl}</code></pre>
+              </div>
+
+              <!-- JSON Response Box -->
+              <div class="rounded-xl border border-white/[0.08] bg-[#0a0c10] overflow-hidden">
+                <div class="flex items-center justify-between px-3.5 py-1.5 border-b border-white/[0.06] bg-black/40 text-[11px] font-mono text-gray-400">
+                  <span class="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    Response Preview
+                  </span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-emerald-950 text-emerald-400 border border-emerald-800">
+                    {ep.responseStatus}
+                  </span>
+                </div>
+                <pre class="p-3.5 text-[11px] font-mono text-emerald-300/90 overflow-x-auto max-h-48 leading-relaxed selection:bg-[#FF6B2C]/30"><code>{ep.responseJson}</code></pre>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>

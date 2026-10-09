@@ -1,0 +1,101 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  canonicalUrl?: string;
+}
+
+const { 
+  title = 'Zaell API Stats — Real-Time API Request Analytics & Telemetry Monitoring',
+  description = 'Real-time API request volume analytics, global throughput metrics, endpoint latency SLAs, and regional edge gateway telemetry monitoring platform built by Zaell.',
+  keywords = 'Zaell, API Stats, API Analytics, Real-Time Monitoring, Telemetry Dashboard, SLA Monitoring, Latency Metrics, Edge Gateway, Microservices Health',
+  canonicalUrl = 'https://zaell-api-stats.vercel.app/'
+} = Astro.props;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Zaell API Stats",
+  "url": canonicalUrl,
+  "description": description,
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "All",
+  "author": {
+    "@type": "Organization",
+    "name": "Zaell",
+    "url": "https://omnifylabs.sbs"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Real-time API Request Ingest Volume Tracking",
+    "Core API Endpoints SLA & Latency Monitoring",
+    "Regional Edge POP Gateways Health Check",
+    "Live HTTP/2 & HTTP/3 Request Stream",
+    "Interactive API Documentation Schema"
+  ]
+};
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <!-- Essential Meta Tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Title & Description (SEO) -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="Zaell" />
+    <meta name="publisher" content="Zaell" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Theme & Color Meta -->
+    <meta name="theme-color" content="#090a0f" />
+    <meta name="msapplication-TileColor" content="#090a0f" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Official Zaell Favicon & Touch Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/logogram-omnifylabs.png" />
+
+    <!-- Open Graph (Facebook / LinkedIn / Discord / Slack) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Zaell API Stats" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="https://zaell-api-stats.vercel.app/logogram-omnifylabs.png" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card Meta -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@omnifylabs" />
+    <meta name="twitter:creator" content="@omnifylabs" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://zaell-api-stats.vercel.app/logogram-omnifylabs.png" />
+
+    <!-- Schema.org JSON-LD Structured Data for Google Rich Snippets -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class="bg-[#090a0f] text-[#e2e8f0] min-h-screen antialiased selection:bg-[#FF6B2C] selection:text-white font-sans overflow-x-clip">
+    <!-- Main Content Layer -->
+    <div class="w-full min-h-screen bg-transparent overflow-x-clip">
+      <slot />
+    </div>
+  </body>
+</html>

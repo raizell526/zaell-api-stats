@@ -1,0 +1,118 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import StatCard from '../components/StatCard.astro';
+import MainChart from '../components/MainChart.astro';
+import ProviderStatus from '../components/ProviderStatus.astro';
+import LiveLogsTable from '../components/LiveLogsTable.astro';
+import StorageView from '../components/StorageView.astro';
+import DocsView from '../components/DocsView.astro';
+---
+
+<Layout title="Zaell API Stats — Real-Time API Request Analytics & Telemetry Monitoring">
+  <!-- Outer Natural Flow Glass App Frame -->
+  <div class="w-full min-h-screen py-3 sm:py-8 px-2 sm:px-5 lg:px-8 flex flex-col items-center relative z-10 min-w-0 max-w-full overflow-x-clip">
+    
+    <!-- Main Spatial Glass Window Container (Ultra-Wide Command Center Frame) -->
+    <div class="w-full min-w-0 max-w-[1640px] 2xl:max-w-[1720px] overflow-x-clip">
+      <main class="w-full min-w-0 max-w-full bg-[#0e1017]/75 backdrop-blur-3xl border border-white/[0.12] rounded-2xl sm:rounded-[36px] p-3.5 sm:p-7 lg:p-8 shadow-2xl shadow-black/80 flex flex-col gap-4 sm:gap-6 relative overflow-x-clip">
+        
+        <!-- Subtle Ambient Background Glow (100% Symmetrical Balance) -->
+        <div class="pointer-events-none absolute -top-24 -right-24 w-96 h-96 bg-[#FF6B2C]/8 rounded-full blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -top-24 -left-24 w-96 h-96 bg-[#FF6B2C]/8 rounded-full blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -bottom-24 -right-24 w-96 h-96 bg-[#FF6B2C]/8 rounded-full blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -bottom-24 -left-24 w-96 h-96 bg-[#FF6B2C]/8 rounded-full blur-3xl" aria-hidden="true"></div>
+
+        <!-- Integrated Header with Top Glass Tabs & View Switcher -->
+        <Header pageTitle="API Stats Dashboard" category="Analytics / Overview" />
+
+        <!-- Dynamic Tab Views Container (Instant In-Page Switching) -->
+        <div class="relative z-10 w-full min-w-0 max-w-full">
+          
+          <!-- 1. VIEW: DASHBOARD (Complete Overview) -->
+          <div id="view-dashboard" class="tab-view flex flex-col gap-5 w-full min-w-0 max-w-full">
+            <!-- Top Stat Cards Strip -->
+            <section aria-label="Key Performance Indicators">
+              <StatCard />
+            </section>
+
+            <!-- Main Traffic Chart & Endpoints SLA -->
+            <section id="analytics" aria-label="Traffic Analytics and Endpoints" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+              <!-- Main Line Chart (7/8 cols on desktop) -->
+              <div class="lg:col-span-7 xl:col-span-8 flex flex-col">
+                <MainChart />
+              </div>
+
+              <!-- Core API Endpoints SLA (5/4 cols on desktop) -->
+              <div id="endpoints-sla" class="lg:col-span-5 xl:col-span-4 flex flex-col">
+                <ProviderStatus />
+              </div>
+            </section>
+
+            <!-- Live Traffic Log Table -->
+            <section id="live-traffic" aria-label="Live API Request Stream">
+              <LiveLogsTable />
+            </section>
+          </div>
+
+          <!-- 2. VIEW: LIVE LOGS (Dedicated Full-Width Log Stream) -->
+          <div id="view-live-logs" class="tab-view hidden flex flex-col gap-5">
+            <LiveLogsTable />
+          </div>
+
+          <!-- 3. VIEW: PROVIDERS (Dedicated Core API Endpoints SLA) -->
+          <div id="view-providers" class="tab-view hidden flex flex-col gap-5">
+            <ProviderStatus />
+          </div>
+
+          <!-- 4. VIEW: STORAGE (Dedicated Regional Edge Gateways) -->
+          <div id="view-storage" class="tab-view hidden flex flex-col gap-5">
+            <StorageView />
+          </div>
+
+          <!-- 5. VIEW: DOCS & API (Dedicated API Documentation) -->
+          <div id="view-docs" class="tab-view hidden flex flex-col gap-5">
+            <DocsView />
+          </div>
+
+        </div>
+
+        <!-- Polished Footer with Harmonious GitHub & WhatsApp Buttons -->
+        <footer class="pt-5 pb-1 border-t border-white/[0.08] flex flex-col md:flex-row items-center justify-between text-xs text-gray-400 gap-4 relative z-10 font-sans">
+          <div class="flex items-center gap-2 text-center md:text-left flex-wrap justify-center md:justify-start">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#FF6B2C]"></span>
+            <span>Built with <strong class="text-white font-semibold hover:text-[#FF6B2C] transition-colors">Zaell API Stats Platform</strong> © 2026</span>
+          </div>
+
+          <div class="flex items-center gap-2.5 sm:gap-3 flex-wrap justify-center">
+            <!-- GitHub Repository Button -->
+            <a 
+              href="https://github.com/omnifyproject/Omnify-API-Stats-Template" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.16] text-gray-300 hover:text-white transition-all shadow-sm group text-xs font-medium"
+            >
+              <svg class="w-4 h-4 text-gray-300 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+              </svg>
+              <span>GitHub Repo</span>
+            </a>
+
+            <!-- WhatsApp Channel Button -->
+            <a 
+              href="https://whatsapp.com/channel/0029VbD95WTBlHpf7WV82D0M" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-emerald-500/30 text-gray-300 hover:text-white transition-all shadow-sm group text-xs font-medium"
+            >
+              <svg class="w-4 h-4 text-emerald-400 group-hover:text-emerald-300 transition-colors shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+              </svg>
+              <span>Join WhatsApp</span>
+            </a>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </div>
+</Layout>

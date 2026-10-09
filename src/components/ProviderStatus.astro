@@ -1,0 +1,86 @@
+---
+import CardGridPattern from './CardGridPattern.astro';
+import { initialApiEndpoints } from '../data/mock';
+
+// Show top 5 high-traffic services for perfect height alignment with MainChart
+const endpoints = initialApiEndpoints.slice(0, 5);
+---
+
+<div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full relative overflow-hidden backdrop-blur-md">
+  <!-- Grid Pattern Background Effect -->
+  <CardGridPattern patternId="endpoints-grid-pattern" className="opacity-40" />
+  
+  <!-- Card Header -->
+  <div class="flex items-start justify-between gap-3 mb-3.5 relative z-10">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-sm sm:text-base font-bold text-white tracking-tight truncate">Core API Endpoints SLA</h2>
+      <p class="text-xs text-gray-400 font-mono mt-0.5 truncate">Real-time Service Health & Latency SLA</p>
+    </div>
+    
+    <!-- Active Status Badge -->
+    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#15261a] text-emerald-400 text-xs font-mono font-semibold shrink-0 whitespace-nowrap border border-[#23452a]/60">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>5 Core Services</span>
+    </div>
+  </div>
+
+  <!-- Endpoints SLA List with Balanced Spacing -->
+  <div class="space-y-3 my-auto relative z-10">
+    {endpoints.map((ep) => {
+      const pct = ep.successRate;
+      const latencyText = `${ep.avgLatency}ms`;
+      const successRateText = `${pct}%`;
+      const activeSegments = Math.min(16, Math.max(1, Math.round((pct / 100) * 16)));
+
+      const methodBadge = ep.method === 'GET' 
+        ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' 
+        : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+
+      return (
+        <div class="space-y-1 group font-mono">
+          <div class="flex items-center justify-between text-xs gap-2">
+            <!-- Method, Path & Latency -->
+            <div class="flex items-center gap-2 min-w-0 flex-1 truncate">
+              <span class={`px-1.5 py-0.5 rounded text-[10px] font-bold border shrink-0 ${methodBadge}`}>
+                {ep.method}
+              </span>
+              <span class="text-gray-200 group-hover:text-white transition-colors truncate font-medium text-[11px] sm:text-xs" title={ep.path}>
+                {ep.path}
+              </span>
+              <span class="text-gray-400 font-mono shrink-0 text-[11px]">
+                ({latencyText})
+              </span>
+            </div>
+
+            <!-- Success Rate Percentage -->
+            <span class="font-bold text-emerald-400 text-xs shrink-0 whitespace-nowrap pl-2">
+              {successRateText}
+            </span>
+          </div>
+
+          <!-- Infrastructure Segmented Health / Status Blocks -->
+          <div class="flex items-center gap-1 w-full py-0.5" title={`Endpoint Health: ${successRateText}`}>
+            {Array.from({ length: 16 }).map((_, i) => (
+              <div
+                class={`h-1.5 flex-1 rounded-[2px] transition-all duration-300 ${
+                  i < activeSegments
+                    ? 'bg-emerald-400/85 group-hover:bg-emerald-400'
+                    : 'bg-white/[0.08]'
+                }`}
+              ></div>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- Bottom System Status Summary -->
+  <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono text-gray-400 mt-2 relative z-10 select-none">
+    <span class="flex items-center gap-1.5">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+      <span>Global Gateway: 99.98% SLA Guaranteed</span>
+    </span>
+    <span class="text-gray-500">Zero Downtime</span>
+  </div>
+</div>

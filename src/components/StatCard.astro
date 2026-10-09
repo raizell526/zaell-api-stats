@@ -1,0 +1,62 @@
+---
+import CardGridPattern from './CardGridPattern.astro';
+import { initialTopStats } from '../data/mock';
+---
+
+<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-3.5">
+  {initialTopStats.map((stat, idx) => (
+    <div class="bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-[#FF6B2C]/40 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between transition-all duration-200 group relative overflow-hidden shadow-lg backdrop-blur-md">
+      <!-- Grid Pattern Overlay -->
+      <CardGridPattern patternId={`stat-grid-${idx}`} />
+
+      <!-- Card Top: Icon & Title -->
+      <div class="flex items-center justify-between gap-1.5 mb-2 relative z-10">
+        <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+          <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-gray-300 group-hover:text-[#FF6B2C] group-hover:border-[#FF6B2C]/40 transition-colors shrink-0">
+            {stat.icon === 'requests' && (
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            )}
+            {stat.icon === 'latency' && (
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF6B2C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+            {stat.icon === 'success' && (
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+            {stat.icon === 'errors' && (
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            )}
+            {stat.icon === 'keys' && (
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+              </svg>
+            )}
+          </div>
+          <span class="text-[11px] sm:text-xs font-medium text-gray-300 truncate">{stat.title}</span>
+        </div>
+      </div>
+
+      <!-- Card Value & Change -->
+      <div class="flex items-baseline justify-between gap-1.5 mt-1 relative z-10 flex-wrap">
+        <div class="text-base sm:text-xl lg:text-2xl font-bold font-mono text-white tracking-tight group-hover:text-[#FF6B2C] transition-colors whitespace-nowrap">
+          {stat.value}
+        </div>
+        <span class={`text-[10px] sm:text-xs font-mono font-semibold whitespace-nowrap ${stat.isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+          {stat.change}
+        </span>
+      </div>
+
+      <!-- Subtext -->
+      <div class="text-[10px] sm:text-xs text-gray-400 font-mono mt-1 truncate relative z-10" title={stat.subtext}>
+        {stat.subtext}
+      </div>
+    </div>
+  ))}
+</div>
