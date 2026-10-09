@@ -3,14 +3,12 @@ import { promisify } from 'util'
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 
 const execFileAsync = promisify(execFile)
 const FFMPEG_PATH = '/usr/bin/ffmpeg'
 
-const TMP_DIR = path.join(process.cwd(), process.env.TMP || 'data/tmp');
-if (!fs.existsSync(TMP_DIR)) {
-    fs.mkdirSync(TMP_DIR, { recursive: true });
-}
+const TMP_DIR = os.tmpdir();
 
 // ─── GIF → MP4 Converter ───────────────────────────────────────────────────
 export async function gifToMp4(fileUrl) {

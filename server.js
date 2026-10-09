@@ -12,6 +12,11 @@ import { searchAnime, getDetail, getEpisodes, getStream } from './src/lib/scrape
 import { generateNanoBanana } from './src/lib/scrapers/nanobanana.js';
 import { googleTTS, luvvoice } from './src/lib/scrapers/luvvoice.js';
 import { generateBratImage, generateBratVideo } from './src/lib/scrapers/brat.js';
+import { deepseek, gpt4, gemini } from './src/lib/scrapers/ai-chat.js';
+import spotify from './src/lib/scrapers/spotify.js';
+import carbon from './src/lib/scrapers/carbon.js';
+import { getSurah, listSurah } from './src/lib/scrapers/quran.js';
+import getCryptoPrices from './src/lib/scrapers/crypto.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,10 +28,9 @@ app.use(express.urlencoded({ extended: true }));
 const reply = (res, data, status = 200) => res.status(status).json({ status: true, creator: 'Zaell API', ...data });
 const replyErr = (res, err, status = 400) => res.status(status).json({ status: false, creator: 'Zaell API', error: typeof err === 'string' ? err : err?.message || 'Error' });
 
-// Serve static frontend build if dist exists
 app.use(express.static('dist'));
 
-// Endpoints
+// Endpoints Downloader
 app.all('/api/downloader/tiktok', async (req, res) => {
   try {
     const url = req.query.url || req.body?.url;
@@ -82,17 +86,16 @@ app.all('/api/downloader/pinterest', async (req, res) => {
   } catch (e) { return replyErr(res, e, 500); }
 });
 
-app.all('/api/search/ytsearch', async (req, res) => {
+app.all('/api/downloader/spotify', async (req, res) => {
   try {
-    const q = req.query.q || req.body?.q;
-    if (!q) return replyErr(res, 'Parameter "q" wajib diisi');
-    search(q, (err, result) => {
-      if (err) return replyErr(res, err, 500);
-      return reply(res, { result });
-    });
+    const query = req.query.url || req.query.q || req.body?.url || req.body?.q;
+    if (!query) return replyErr(res, 'Parameter "url" atau "q" wajib diisi');
+    const result = await spotify(query);
+    return reply(res, { result });
   } catch (e) { return replyErr(res, e, 500); }
 });
 
+// Endpoints AI
 app.all('/api/ai/nanobanana', async (req, res) => {
   try {
     const prompt = req.query.prompt || req.body?.prompt;
@@ -102,6 +105,34 @@ app.all('/api/ai/nanobanana', async (req, res) => {
   } catch (e) { return replyErr(res, e, 500); }
 });
 
+app.all('/api/ai/deepseek', async (req, res) => {
+  try {
+    const prompt = req.query.prompt || req.query.q || req.body?.prompt || req.body?.q;
+    if (!prompt) return replyErr(res, 'Parameter "prompt" wajib diisi');
+    const result = await deepseek(prompt);
+    return reply(res, { result });
+  } catch (e) { return replyErr(res, e, 500); }
+});
+
+app.all('/api/ai/gpt4', async (req, res) => {
+  try {
+    const prompt = req.query.prompt || req.query.q || req.body?.prompt || req.body?.q;
+    if (!prompt) return replyErr(res, 'Parameter "prompt" wajib diisi');
+    const result = await gpt4(prompt);
+    return reply(res, { result });
+  } catch (e) { return replyErr(res, e, 500); }
+});
+
+app.all('/api/ai/gemini', async (req, res) => {
+  try {
+    const prompt = req.query.prompt || req.query.q || req.body?.prompt || req.body?.q;
+    if (!prompt) return replyErr(res, 'Parameter "prompt" wajib diisi');
+    const result = await gemini(prompt);
+    return reply(res, { result });
+  } catch (e) { return replyErr(res, e, 500); }
+});
+
+// Endpoints Tools
 app.all('/api/tools/luvvoice', async (req, res) => {
   try {
     const text = req.query.text || req.body?.text;
@@ -124,6 +155,42 @@ app.all('/api/tools/brat', async (req, res) => {
     if (!text) return replyErr(res, 'Parameter "text" wajib diisi');
     const r = mode === 'video' ? await generateBratVideo(text) : await generateBratImage(text);
     return reply(res, { result: { base64: r.buffer ? r.buffer.toString('base64') : null } });
+  } catch (e) { return replyErr(res, e, 500); }
+});
+
+app.all('/api/tools/carbon', async (req, res) => {
+  try {
+    const code = req.query.code || req.body?.code || req.query.text || req.body?.text;
+    if (!code) return replyErr(res, 'Parameter "code" wajib diisi');
+    const result = await carbon(code, req.query.theme, req.query.language);
+    return reply(res, { result });
+  } catch (e) { return replyErr(res, e, 500); }
+});
+
+// Endpoints Search
+app.all('/api/search/ytsearch', async (req, res) => {
+  try {
+    const q = req.query.q || req.body?.q;
+    if (!q) return replyErr(res, 'Parameter "q" wajib diisi');
+    search(q, (err, result) => {
+      if (err) return replyErr(res, err, 500);
+      return reply(res, { result });
+    });
+  } catch (e) { return replyErr(res, e, 500); }
+});
+
+app.all('/api/search/quran', async (req, res) => {
+  try {
+    const surah = req.query.surah || req.query.id || req.body?.surah;
+    const result = surah ? await getSurah(parseInt(surah, 10)) : await listSurah();
+    return reply(res, { result });
+  } catch (e) { return replyErr(res, e, 500); }
+});
+
+app.all('/api/search/crypto', async (req, res) => {
+  try {
+    const result = await getCryptoPrices();
+    return reply(res, { result });
   } catch (e) { return replyErr(res, e, 500); }
 });
 

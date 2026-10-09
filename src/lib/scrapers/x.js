@@ -4,13 +4,13 @@ import { execFile } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
 import * as path from 'path';
+import os from 'os';
 const cheerio = await import('cheerio');
 
 const execFileAsync = promisify(execFile);
 const FFMPEG_PATH = '/usr/bin/ffmpeg';
 
-const TMP_DIR = path.join(process.cwd(), 'data/tmp');
-if (!fs.existsSync(TMP_DIR)) fs.mkdirSync(TMP_DIR, { recursive: true });
+const TMP_DIR = os.tmpdir();
 
 export function isLink(text) {
     return text?.match(/https?:\/\/\S+/gi) || null;
