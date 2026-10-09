@@ -9,6 +9,7 @@ import ProviderStatus from '../components/ProviderStatus.astro';
 import LiveLogsTable from '../components/LiveLogsTable.astro';
 import StorageView from '../components/StorageView.astro';
 import DocsView from '../components/DocsView.astro';
+import PlaygroundView from '../components/PlaygroundView.astro';
 ---
 
 <Layout title="Zaell API Stats — Real-Time API Request Analytics & Telemetry Monitoring">
@@ -72,8 +73,9 @@ import DocsView from '../components/DocsView.astro';
             <StorageView />
           </div>
 
-          <!-- 5. VIEW: DOCS & API (Dedicated API Documentation) -->
+          <!-- 5. VIEW: DOCS & API (Dedicated API Documentation & Playground) -->
           <div id="view-docs" class="tab-view hidden flex flex-col gap-5">
+            <PlaygroundView />
             <DocsView />
           </div>
 

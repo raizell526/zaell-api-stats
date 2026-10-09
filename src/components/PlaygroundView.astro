@@ -1,0 +1,125 @@
+---
+import CardGridPattern from './CardGridPattern.astro';
+---
+
+<div class="flex flex-col gap-6 font-sans">
+  <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 sm:p-7 shadow-xl relative overflow-hidden backdrop-blur-md">
+    <CardGridPattern patternId="playground-banner-pattern" className="opacity-30" />
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="px-2.5 py-0.5 rounded-full bg-[#FF6B2C]/10 border border-[#FF6B2C]/20 text-[11px] font-mono font-bold text-[#FF6B2C]">
+            API PLAYGROUND v2.0
+          </span>
+          <span class="text-xs text-gray-400 font-mono">Live Testing Console</span>
+        </div>
+        <h2 class="text-lg sm:text-xl font-bold text-white tracking-tight">Zaell REST API Interactive Playground</h2>
+        <p class="text-xs text-gray-400 font-mono mt-1 max-w-2xl">
+          Uji seluruh endpoint REST API Downloader, AI Generator, Text-to-Speech, & Search secara langsung dari browser.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 font-mono text-xs">
+        <div class="px-3 py-2 rounded-xl bg-black/40 border border-white/[0.08] flex items-center gap-2">
+          <span class="text-gray-400">Target Base:</span>
+          <code class="text-emerald-400 font-bold" id="api-base-display">https://zaell-api-stats.vercel.app</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Testing Console Window -->
+  <div class="bg-[#0e1017]/90 border border-white/[0.1] rounded-2xl p-5 sm:p-7 shadow-2xl backdrop-blur-xl flex flex-col gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <!-- Left Options Column -->
+      <div class="lg:col-span-5 flex flex-col gap-4">
+        <div>
+          <label class="block text-xs font-mono text-gray-400 mb-2 uppercase font-semibold">Pilih Endpoint REST API</label>
+          <select id="pg-endpoint-select" class="w-full bg-black/50 border border-white/[0.12] rounded-xl px-4 py-3 text-xs font-mono text-white focus:outline-none focus:border-[#FF6B2C] transition-colors cursor-pointer">
+            <option value="/api/downloader/tiktok" data-param="url" data-placeholder="https://vt.tiktok.com/xxx">🎵 TikTok Downloader (/api/downloader/tiktok)</option>
+            <option value="/api/downloader/instagram" data-param="url" data-placeholder="https://www.instagram.com/reel/xxx">📸 Instagram Downloader (/api/downloader/instagram)</option>
+            <option value="/api/downloader/facebook" data-param="url" data-placeholder="https://www.facebook.com/watch/xxx">📘 Facebook Downloader (/api/downloader/facebook)</option>
+            <option value="/api/downloader/twitter" data-param="url" data-placeholder="https://x.com/user/status/xxx">🐦 Twitter (X) Downloader (/api/downloader/twitter)</option>
+            <option value="/api/downloader/ytdl" data-param="url" data-placeholder="https://youtu.be/xxx">▶️ YouTube Downloader (/api/downloader/ytdl)</option>
+            <option value="/api/downloader/pinterest" data-param="q" data-placeholder="anime wallpaper 4k">📌 Pinterest Downloader & Search (/api/downloader/pinterest)</option>
+            <option value="/api/search/ytsearch" data-param="q" data-placeholder="Alan Walker Faded">🔍 YouTube Search (/api/search/ytsearch)</option>
+            <option value="/api/ai/nanobanana" data-param="prompt" data-placeholder="cyberpunk samurai, 8k">🍌 Nano Banana AI (/api/ai/nanobanana)</option>
+            <option value="/api/tools/luvvoice" data-param="text" data-placeholder="Halo selamat pagi semuanya!">🎙️ Luvvoice TTS (/api/tools/luvvoice)</option>
+            <option value="/api/tools/brat" data-param="text" data-placeholder="Brat summer album">🟩 Brat Sticker Generator (/api/tools/brat)</option>
+          </select>
+        </div>
+
+        <div>
+          <label id="pg-input-label" class="block text-xs font-mono text-gray-400 mb-2 uppercase font-semibold">Input Parameter (url)</label>
+          <input type="text" id="pg-input-value" class="w-full bg-black/50 border border-white/[0.12] rounded-xl px-4 py-3 text-xs font-mono text-white focus:outline-none focus:border-[#FF6B2C] transition-colors" placeholder="https://vt.tiktok.com/xxx" />
+        </div>
+
+        <button id="pg-submit-btn" class="w-full py-3 px-4 rounded-xl bg-[#FF6B2C] hover:bg-[#ff7b42] text-white text-xs font-mono font-bold tracking-wider transition-all shadow-lg shadow-[#FF6B2C]/25 flex items-center justify-center gap-2 cursor-pointer">
+          <span>⚡ EXECUTE REQUEST</span>
+        </button>
+      </div>
+
+      <!-- Right Output Console Column -->
+      <div class="lg:col-span-7 flex flex-col gap-2">
+        <div class="flex items-center justify-between font-mono text-xs text-gray-400">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>Response Console</span>
+          <span id="pg-status-badge" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] text-gray-400 border border-white/[0.08]">Idle</span>
+        </div>
+
+        <div class="w-full h-80 bg-black/60 border border-white/[0.08] rounded-xl p-4 overflow-auto font-mono text-[11px] leading-relaxed text-emerald-300">
+          <pre id="pg-response-output" class="whitespace-pre-wrap break-all"><code>{JSON.stringify({ status: true, creator: 'Zaell API', message: 'Pilih endpoint dan klik Execute Request untuk menguji API.' }, null, 2)}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const select = document.getElementById('pg-endpoint-select') as HTMLSelectElement;
+  const inputLabel = document.getElementById('pg-input-label') as HTMLElement;
+  const inputValue = document.getElementById('pg-input-value') as HTMLInputElement;
+  const submitBtn = document.getElementById('pg-submit-btn') as HTMLButtonElement;
+  const statusBadge = document.getElementById('pg-status-badge') as HTMLElement;
+  const output = document.getElementById('pg-response-output') as HTMLElement;
+
+  if (select && inputLabel && inputValue && submitBtn && statusBadge && output) {
+    select.addEventListener('change', () => {
+      const opt = select.options[select.selectedIndex];
+      const paramName = opt.getAttribute('data-param') || 'url';
+      const placeholder = opt.getAttribute('data-placeholder') || '';
+      inputLabel.textContent = `Input Parameter (${paramName})`;
+      inputValue.placeholder = placeholder;
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      const endpoint = select.value;
+      const opt = select.options[select.selectedIndex];
+      const paramName = opt.getAttribute('data-param') || 'url';
+      const val = inputValue.value.trim() || inputValue.placeholder;
+
+      statusBadge.textContent = 'Executing...';
+      statusBadge.className = 'px-2 py-0.5 rounded text-[10px] bg-yellow-500/20 text-yellow-400 border border-yellow-500/30';
+      output.textContent = 'Sending HTTP request to REST API...';
+
+      const startTime = performance.now();
+      try {
+        const reqUrl = `${endpoint}?${encodeURIComponent(paramName)}=${encodeURIComponent(val)}`;
+        const res = await fetch(reqUrl);
+        const duration = Math.round(performance.now() - startTime);
+        const json = await res.json().catch(() => null);
+
+        statusBadge.textContent = `${res.status} ${res.statusText} (${duration}ms)`;
+        statusBadge.className = res.ok
+          ? 'px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800'
+          : 'px-2 py-0.5 rounded text-[10px] bg-red-950 text-red-400 border border-red-800';
+
+        output.textContent = JSON.stringify(json || { error: 'Invalid JSON response' }, null, 2);
+      } catch (err: any) {
+        statusBadge.textContent = 'Failed';
+        statusBadge.className = 'px-2 py-0.5 rounded text-[10px] bg-red-950 text-red-400 border border-red-800';
+        output.textContent = JSON.stringify({ status: false, creator: 'Zaell API', error: err?.message || err }, null, 2);
+      }
+    });
+  }
+</script>
