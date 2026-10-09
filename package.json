@@ -2,7 +2,7 @@
   "name": "zaell-api-stats",
   "type": "module",
   "version": "1.0.5",
-  "description": "Cloudflare Turnstile & API Streaming Bypass Monitor for Omnify",
+  "description": "Zaell API Stats — Real-Time API Request Analytics & Telemetry Monitoring",
   "engines": {
     "node": ">=22.12.0"
   },
